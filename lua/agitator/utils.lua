@@ -11,7 +11,7 @@ local function open_file_branch(branch, fname)
     vim.api.nvim_exec('silent r! git show ' .. branch .. ':./' .. fname, false)
     vim.api.nvim_command('1d')
     local fname_without_path = fname:match("([^/]+)$")
-    local base_bufcmd = 'silent file [' .. branch .. '] ' .. fname_without_path
+    local base_bufcmd = "silent file [" .. branch .. "]/" .. fname_without_path
     local git_root_folder = git_root_folder()
     local commit = commit_head_of_branch(branch)
     local path_in_git_prj = (get_cwd() .. '/' .. fname):gsub(escape_pattern(git_root_folder) .. '/', '')
@@ -25,7 +25,11 @@ local function open_file_branch(branch, fname)
         local fname_ext = fname_without_path:match(".*(%.[^.]+)$")
         local i = 2
         while not succeeded and i < 20 do
-            succeeded = pcall(vim.api.nvim_exec, 'silent file [' .. branch .. '] ' .. fname_without_ext .. ' (' .. i .. ')' .. fname_ext, false)
+            succeeded = pcall(
+                vim.api.nvim_exec,
+                "silent file [" .. branch .. "]/" .. i .. "/" .. fname_without_ext .. fname_ext,
+                false
+            )
             i = i + 1
         end
     end
